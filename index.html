@@ -1,12 +1,138 @@
-<!-- index.html -->
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>My First Page</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+    <style>
+      body {
+        background-color: #e57359;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh; /* 画面全体を中央揃え */
+      }
+      h1 {
+        font-size: 30px;
+        color: #e57359;
+      }
+      .contener {
+        display: inline-flex; /* コンテンツに基づいてサイズを調整 */
+        flex-direction: column; /* 縦方向に並べる */
+        justify-content: center; /* 水平方向の中央揃え */
+        align-items: center; /* 垂直方向の中央揃え */
+        padding: 50px; /* 内側の余白を設定 */
+        background-color: #fff;
+        border-radius: 10px; /* 角を丸くする */
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* 軽い影を追加 */
+      }
+      #inputbox {
+        display: flex;
+        width: 420px;
+        justify-content: space-between;
+        padding: 30px 0px 20px 0px;
+      }
+      input {
+        width: 255px;
+        height: 40px;
+        border: none;
+        background-color: #f4f4f4;
+        border-radius: 5px;
+        padding-left: 15px;
+      }
+      button {
+        width: 130px;
+        border: none;
+        background-color: #ef8067;
+        color: #2e2e2e;
+        border-radius: 5px;
+      }
+      #taskbox {
+        display: flex; /* Flexboxを適用 */
+        flex-direction: column; /* 縦方向に並べる */
+        gap: 10px; /* タスク間の間隔を設定 */
+      }
+      .task {
+        padding: 10px 15px;
+        width: 390px;
+        background-color: #f0f0f0;
+        border-radius: 5px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .delete {
+        background-color: #f56342;
+        padding: 8px 15px;
+        border-radius: 5px;
+        color: #fff;
+        font-size: 13px;
+      }
+    </style>
   </head>
   <body>
-    <h1>こんにちは、GitHub Pages！</h1>
-    <p>これは私のはじめての公開Webページです。</p>
+    <div class="contener">
+      <h1>ToDoリスト</h1>
+      <form id="inputbox">
+        <input id="textbox" placeholder="新しいタスクを入力" name="textbox" />
+        <button id="button" type="submit">タスクを追加</button>
+      </form>
+      <div id="taskbox"></div>
+    </div>
+
+    <script>
+      const form = document.getElementById("inputbox");
+      const taskbox = document.getElementById("taskbox");
+      let tasks = JSON.parse(localStorage.getItem("tasks")) || []; // ローカルストレージからタスクを取得
+
+      // タスクを表示する関数
+      function displayTasks() {
+        taskbox.innerHTML = ""; // タスクボックスを初期化
+        tasks.forEach((usertask) => {
+          const taskname = document.createElement("div");
+          const del = document.createElement("div");
+          del.textContent = "削除";
+          del.className = "delete";
+
+          const task = document.createElement("div");
+          task.className = "task";
+          taskname.textContent = usertask; // タスク内容を設定
+
+          // 削除ボタンのクリックイベント
+          del.addEventListener("click", () => {
+            const index = tasks.indexOf(usertask); // 配列内のタスクのインデックスを取得
+            if (index !== -1) {
+              tasks.splice(index, 1); // 配列からタスクを削除
+              localStorage.setItem("tasks", JSON.stringify(tasks)); // ローカルストレージを更新
+              displayTasks(); // タスクを再表示
+            }
+          });
+
+          task.appendChild(taskname);
+          task.appendChild(del);
+          taskbox.appendChild(task);
+        });
+      }
+
+      // ページ読み込み時にタスクを表示
+      displayTasks();
+
+      form.addEventListener("submit", function (event) {
+        event.preventDefault(); // デフォルトの送信を止める
+
+        const usertask = form.elements["textbox"].value.trim(); // 入力されたタスクを取得し、空白を除去
+
+        if (usertask !== "") {
+          tasks.push(usertask); // 配列にタスクを追加
+          localStorage.setItem("tasks", JSON.stringify(tasks)); // ローカルストレージを更新
+          displayTasks(); // タスクを再表示
+        }
+
+        form.reset(); // フォームをリセット
+      });
+    </script>
   </body>
 </html>
